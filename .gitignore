@@ -1,7 +1,6 @@
 .DS_Store
 .cache
 node_modules
-examples/build
 cypress/videos
 cypress/screenshots
 dist
