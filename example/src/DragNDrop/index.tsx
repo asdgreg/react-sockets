@@ -14,7 +14,7 @@ import ReactFlow, {
   NodeChange,
 } from 'react-flow-renderer';
 import {io} from 'socket.io-client';
-import {addData, getDataFirebase} from './data/firebase'
+import {addData, getDataFirebase, getDataAll} from './data/firebase'
 
 import Sidebar from './Sidebar';
 
@@ -29,8 +29,14 @@ const socket = io("https://process-sockets-x7hzxezygq-uc.a.run.app");
 
 let initialNodes: Node[] = [
       // { id: 'a', type: 'input', data: { label: 'input node' }, position: { x: 250, y: 5 } },
-      { id: '1', data: { label: 'Node 1' }, position: { x: 100, y: 100 } },
-      { id: '2', data: { label: 'Node 2' }, position: { x: 100, y: 200 } },
+      { id: '1', data: { label: 'Limpieza' }, position: { x: 100, y: 100 } },
+      { id: '2', data: { label: 'Mantenimiento' }, position: { x: 100, y: 200 } },
+      { id: '3', data: { label: 'Pintar' }, position: { x: 100, y: 300 } },
+      { id: '4', data: { label: 'Lavar' }, position: { x: 100, y: 400 } },
+      { id: '5', data: { label: 'Inicio' }, position: { x: 100, y: 500 } },
+      { id: '6', data: { label: 'Final' }, position: { x: 100, y: 600 } },
+      { id: '7', data: { label: 'Desicion' }, position: { x: 100, y: 700 } },
+      { id: '8', data: { label: 'Evaluacion' }, position: { x: 100, y: 800 } },
       // { id: 'node-1', type: 'textUpdater', position: { x: 0, y: 0 }, data: { value: 123 } },
 ];
 
@@ -44,6 +50,12 @@ const onDragOver = (event: DragEvent) => {
   console.log(event.clientX, event.clientY)
 };
 
+const onLoad = (reactFlowInstance: any) =>{
+  // const data = await getDataAll();
+  // initialNodes =data ? data: []
+  // console.log(data);
+}
+
 let user="Greg"
 let processId ="123456"
 let id = 0;
@@ -55,7 +67,10 @@ const [isConnected, setIsConnected] = useState(socket.connected);
 const [lastPong, setLastPong] = useState(String);
 useEffect(() => {
 
-  socket.on('connect', () => {
+  socket.on('connect', async () => {
+    // const data = await getDataAll();
+    // initialNodes =data ? data: []
+    // console.log(data);
     setIsConnected(true);
 
     socket.emit('signin', {user, processId}, (error:any, data:any) => {
@@ -82,7 +97,9 @@ useEffect(() => {
 const updateProcessId = (val:any) => {
   processId = val;
 }
-
+  // const data = getDataAll();
+  // initialNodes =data ? data: []
+  // console.log(data);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -100,6 +117,9 @@ const updateProcessId = (val:any) => {
   const onInit = (rfi: ReactFlowInstance) => {
     setReactFlowInstance(rfi);
     console.log("loading instance")
+    const data = getDataAll();
+    initialNodes =data ? data: []
+    console.log(data);
   } 
   // const onChange={(evt) => console.log(id, evt.target.value)}
   const onDrop = (event: DragEvent) => {
@@ -197,12 +217,12 @@ const updateProcessId = (val:any) => {
         <form>
           <label>
             User:
-            <input type="text" name="User" value={user}/>
+            <input readOnly type="text" name="User" value={user}/>
           </label>
           <p/> 
           <label>
             ProcessId:
-            <input type="text" name="processId" value={processId}/>
+            <input readOnly type="text" name="processId" value={processId}/>
           </label>
         </form>
       </div>       
@@ -220,6 +240,7 @@ const updateProcessId = (val:any) => {
             onDrop={onDrop}
             onDragOver={onDragOver}
             nodeTypes={nodeTypes}
+            onLoad={onLoad}
             // onMouseLeave={onNodeMouseLeave}          
             >
             <Controls />

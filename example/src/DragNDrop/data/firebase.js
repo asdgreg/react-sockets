@@ -3,7 +3,7 @@ const { getFirestore } = require ("firebase/firestore");
 const { doc, getDoc, setDoc } = require ("firebase/firestore");
 // Add a second document with a generated ID.
 const { addDoc, collection } = require("firebase/firestore");
-
+const  { query, where, getDocs } = require("firebase/firestore");
 // TODO: Replace the following with your app's Firebase project configuration
 // See: https://firebase.google.com/docs/web/learn-more#config-object
 const firebaseConfig = {
@@ -94,6 +94,37 @@ export async function getDataFirebase(nodeId) {
     }
 }
 
+export function getDataAll() {
+  try {
+    let data = []
+      const q = query(collection(db, "demo_editor"))
+      getDocs(q).then(query=>{
+        query.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+          data.push(doc.data())
+        });
+      });
+      time
+      return data;
+
+
+
+
+      // const docRef = doc(db, "demo_editor");
+      // const docSnap = await getDoc(docRef);
+      // if (docSnap.exists()) {
+      //     // console.log("Document data:", docSnap.data());
+      //     return docSnap.data();
+      // } else {
+      //     // doc.data() will be undefined in this case
+      //     console.log("No such document!");
+      //     return null
+      // }
+      } catch (e) {
+      console.error("Error reading all documents: ", e);
+  }
+}
 
 // In-memory database example -
 // Production applications should use a persistent database such as Firestore
